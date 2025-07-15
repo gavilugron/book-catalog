@@ -1,11 +1,58 @@
-.idea/
-.vscode/
+# Python
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+.eggs/
+*.log
+*.sqlite3
+
+# Django
+
+local_settings.py
+db.sqlite3
+*.mo
+*.pot
+*.pyc
+
+# Environments
+
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-local_settings.py
 .env
+.env.*
+
+
+# IDE
+
+.vscode/
+.idea/
+
+# Docker
+
 .dockerignore
 Dockerfile
+
+# OS Files
+
+.DS_Store
+Thumbs.db
+
+# GitHub 
+
+.github/
+*.coverage
+htmlcov/
+coverage.xml
+
+# Migrations
+
+*/migrations/__pycache__/
+*/migrations/*.py[cod]
