@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from books.views import BookViewSet
+from django.shortcuts import redirect
 
 router = DefaultRouter()
 router.register(r'books', BookViewSet)
 
 urlpatterns = [
+    path('', lambda request: redirect('api/books/', permanent=False)),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls))
 ]
