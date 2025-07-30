@@ -2,11 +2,13 @@ name: CI Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       db:
         image: postgres:14
@@ -14,17 +16,28 @@ jobs:
           POSTGRES_DB: book_catalog
           POSTGRES_USER: devuser
           POSTGRES_PASSWORD: devpass
-        ports: ['5432:5432']
+        ports: 
+          - "5432:5432"
         options: >-
           --health-cmd="pg_isready -U devuser"
-          --health-interval=10s --health-timeout=5s --health-retries=5
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: List project files
+        run: |
+          echo "Working directory: $(pwd)"
+          ls -R .
 
       - name: Set up Python
-        uses: actions/setup-python@v4
-        with: { python-version: '3.11' }
+        uses: "actions/setup-python@v4"
+        with:
+          python-version: "3.11"
+        
 
       - name: Install dependencies
         run: |
