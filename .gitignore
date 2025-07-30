@@ -34,6 +34,8 @@ venv.bak/
 .vscode/
 .idea/
 
+# Docker
+
 # OS Files
 
 .DS_Store
