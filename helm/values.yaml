@@ -1,0 +1,13 @@
+image:
+  repository: your-docker-user/book-catalog
+  tag: latest
+service:
+  port: 8000
+ingress:
+  enabled: false
+  className: nginx
+  hosts:
+    - host: bookcatalog.local
+      paths:
+        - path: /
+          pathType: Prefix
