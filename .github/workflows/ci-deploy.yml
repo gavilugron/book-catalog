@@ -1,50 +1,65 @@
-name: CI Deploy
+name: CI Test
 
 on:
-  workflow_run:
-    workflows:
-      - CI Build
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
-  deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  test:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3.0.0
-        with:
-          version: '1.27.3'
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v3.0.0
-        with:
-          version: '3.12.1'
-
-      - name: Configure kubeconfig
+    services:
+      db:
+        image: postgres:14-alpine
         env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        run: |
-          echo "${KUBE_CONFIG_DATA}" | base64 --decode > kubeconfig
+          POSTGRES_DB: book_catalog
+          POSTGRES_USER: devuser
+          POSTGRES_PASSWORD: devpass
+        ports: 
+          - "5432:5432"
+        options: >-
+          --health-cmd="pg_isready -U devuser"
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
 
-      - name: Preview Helm changes
-        run: |
-          helm diff upgrade \
-            --allow-unreleased \
-            book-catalog helm/ \
-            --kubeconfig kubeconfig
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
 
-      - name: Lint Helm chart
+      - name: List project files
         run: |
-          helm lint helm/ 
+          echo "Working directory: $(pwd)"
+          ls -R .
 
-      - name: Deploy with Helm
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+        
+
+      - name: Install dependencies
         run: |
-          helm upgrade --install book-catalog helm/ \
-            --kubeconfig kubeconfig \
-            --set image.repository=${{ secrets.DOCKER_USERNAME }}/book-catalog \
-            --set image.tag=latest
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run migrations
+        env:
+          POSTGRES_DB: book_catalog
+          POSTGRES_USER: devuser
+          POSTGRES_PASSWORD: devpass
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
+        run: python manage.py migrate --no-input
+
+      - name: Run tests
+        run: python manage.py test tests
