@@ -47,7 +47,6 @@ Thumbs.db
 
 # GitHub 
 
-.github/
 *.coverage
 htmlcov/
 coverage.xml
