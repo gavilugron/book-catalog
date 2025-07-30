@@ -37,8 +37,6 @@ venv.bak/
 
 # Docker
 
-.dockerignore
-Dockerfile
 
 # OS Files
 

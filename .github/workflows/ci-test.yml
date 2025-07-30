@@ -62,4 +62,4 @@ jobs:
         run: python manage.py migrate --no-input
 
       - name: Run tests
-        run: python manage.py test
+        run: python manage.py test tests

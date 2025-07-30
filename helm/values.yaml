@@ -1,0 +1,9 @@
+replicaCount: 1
+image:
+  repository: myrepo/book-catalog
+  tag: latest
+service:
+  type: ClusterIP
+  port: 8000
+ingress:
+  enabled: false

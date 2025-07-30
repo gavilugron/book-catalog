@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "book-catalog.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "book-catalog.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "book-catalog.fullname" . }}
+    spec:
+      containers:
+        - name: web
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: POSTGRES_DB
+              value: book_catalog
+            - name: POSTGRES_USER
+              value: devuser
+            - name: POSTGRES_PASSWORD
+              value: devpass
+            - name: POSTGRES_HOST
+              value: db
+            - name: POSTGRES_PORT
+              value: "5432"
+          ports:
+            - containerPort: 8000

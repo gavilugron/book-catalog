@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: book_catalog
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  web:
+    build: .
+    command: sh -c "python manage.py migrate && gunicorn api.wsgi:application --bind 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_DB: book_catalog
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    depends_on:
+      - db
+volumes:
+  pgdata:
