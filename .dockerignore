@@ -1,8 +1,8 @@
-venv/
-.env
+.git
 __pycache__/
 *.pyc
 *.pyo
-.git
-.gitignore
-docker-compose.yml
+*.pyd
+.env
+.env.*
+/tests/
