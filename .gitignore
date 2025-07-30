@@ -29,16 +29,10 @@ venv.bak/
 .env
 .env.*
 
-
 # IDE
 
 .vscode/
 .idea/
-
-# Docker
-
-.dockerignore
-Dockerfile
 
 # OS Files
 
