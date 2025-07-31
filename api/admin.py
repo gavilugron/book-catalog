@@ -3,6 +3,6 @@ from .models import Book
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'author', 'isbn', 'published_date')
+    list_display  = ('id', 'title', 'author', 'isbn', 'published_date', 'created_at')
     search_fields = ('title', 'author', 'isbn')
-    list_filter = ('published_date',)
+    list_filter   = ('published_date', 'created_at')
