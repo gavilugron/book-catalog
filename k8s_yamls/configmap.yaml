@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+data:
+  # Use a configmap for only envs
+  DEBUG: "false"
+  LOG_LEVEL: "INFO"
+
+  # For mounted files
+  app.conf: |
+    [settings]
+    debug = false
+    log_level = INFO
