@@ -2,6 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import BookViewSet
 
+app_name = 'api'
+
 router = DefaultRouter()
 router.register(r'books', BookViewSet, basename='book')
 
