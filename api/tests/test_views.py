@@ -12,7 +12,8 @@ class BookViewTest(APITestCase):
             author="Author"
         )
         
-        url = reverse('api:books')
+        url = reverse('api:book-list')
+#        url = reverse('api:books')
         response = self.client.get(url, format='json')
         assert response.status_code == status.HTTP_200_OK
         body = response.json()
