@@ -4,4 +4,19 @@ from .models import Book
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['title', 'description', 'author', 'created_at']
+        fields = [
+            'id',
+            'title',
+            'description',
+            'author',
+            'isbn',
+            'published_date',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
+
+
+#class BookSerializer(serializers.ModelSerializer):
+#    class Meta:
+#        model = Book
+#        fields = ['title', 'description', 'author', 'created_at']

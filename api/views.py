@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import viewsets
 from .serializers import BookSerializer
 from .models import Book
 
@@ -11,24 +12,32 @@ class HealthView(APIView):
 
 health_view = HealthView.as_view()
 
+class BookViewSet(viewsets.ModelViewSet):
+    """
+    Provides list, create, retrieve, update and destroy actions for Book.
+    """
+    queryset = Book.objects.all().order_by('-created_at')
+    serializer_class = BookSerializer
+
+
 #
 # /api/books - All methods (GET, POST)
 #
-class BookView(APIView):
-    """ List all books, or create a new book """
+#class BookView(APIView):
+#    """ List all books, or create a new book """
     
-    def get(self, request, *args, **kwargs):
-        all_books = Book.objects.all()
-        serializer = BookSerializer(all_books, many=True)
-        return Response(serializer.data)
+#    def get(self, request, *args, **kwargs):
+#        all_books = Book.objects.all()
+#        serializer = BookSerializer(all_books, many=True)
+#        return Response(serializer.data)
     
-    def post(self, request, *args, **kwargs):
-        data = request.data
+#    def post(self, request, *args, **kwargs):
+#       data = request.data
         
-        serializer = BookSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+#        serializer = BookSerializer(data=data)
+#        serializer.is_valid(raise_exception=True)
+#        serializer.save()
 
-        return Response(serializer.data)
+#        return Response(serializer.data)
         
-book_view = BookView.as_view()
+#book_view = BookView.as_view()
