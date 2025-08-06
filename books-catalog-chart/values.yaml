@@ -7,10 +7,11 @@ image:
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag to deploy
-  tag: ""
+  tag: "main"
 
 # This will be used to configure the Deployment so it can pull the image
-imagePullSecrets: []
+imagePullSecrets: 
+  - name: ghcr-cred # Name of the secret created by the kubectl create secret command
 
 ingress:
   annotations:
