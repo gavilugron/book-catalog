@@ -81,7 +81,7 @@ Visit http://127.0.0.1:8000/api/books/.
 
 ## Using Docker Compose
 
-```
+```Bash
 docker-compose up --build
 ```
 
@@ -98,19 +98,19 @@ Assuming service on `localhost:8000`:
 
 - **List all books**
 
-```
+```Bash
 curl http://localhost:8000/api/books/
 ```
 
 - **Get one book**
 
-```
+```Bash
 curl http://localhost:8000/api/books/1/
 ```
 
 - **Create a book**
 
-```
+```Bash
 curl -X POST http://localhost:8000/api/books/ \
   -H "Content-Type: application/json" \
   -d '{"title":"Dune","author":"Frank Herbert","published_date":"1965-08-01"}'
@@ -118,7 +118,7 @@ curl -X POST http://localhost:8000/api/books/ \
 
 - **Update a book**
 
-```
+```Bash
 curl -X PUT http://localhost:8000/api/books/1/ \
   -H "Content-Type: application/json" \
   -d '{"title":"Dune Messiah"}'
@@ -126,7 +126,7 @@ curl -X PUT http://localhost:8000/api/books/1/ \
 
 - **Delete a book**
 
-```
+```Bash
 curl -X DELETE http://localhost:8000/api/books/1/
 ```
 
@@ -134,7 +134,7 @@ curl -X DELETE http://localhost:8000/api/books/1/
 
 ## Running Tests
 
-```
+```Bash
 # with virtualenv
 pytest
 
@@ -149,13 +149,13 @@ GitHub Actions automatically runs tests on every PR and push to main.
 
 - Build and tag locally:
 
-```
+```Bash
 docker build -t ghcr.io/<your-org>/book-catalog:latest .
 ```
 
 - Push to GHCR:
 
-```
+```Bash
 docker push ghcr.io/<your-org>/book-catalog:latest
 ```
 
@@ -180,7 +180,7 @@ Decodes `KUBE_CONFIG_DATA`, then runs `helm upgrade --install` to deploy the new
 
 Chart directory: `books-catalog-chart/`
 
-```
+```Bash
 # deploy to default namespace
 helm upgrade --install book-catalog ./books-catalog-chart \
   --namespace default \
@@ -198,7 +198,7 @@ Under `k8s_yamls/`:
 
 Apply with:
 
-```
+```Bash
 kubectl apply -f k8s_yamls/postgres/
 kubectl apply -f k8s_yamls/application/
 ```
