@@ -378,5 +378,3 @@ This project is licensed under the MIT License. See the LICENSE file for details
 **About**: CCT-DevOps 2025 Summer Course - Book Catalog API
 
 This project serves as a comprehensive example of modern DevOps practices, demonstrating the integration of development, containerization, orchestration, and GitOps methodologies in a production-ready application.
-
-<div style="text-align: center">⁂</div>
