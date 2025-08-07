@@ -375,6 +375,13 @@ We welcome contributions! Please follow these guidelines:
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-**About**: CCT-DevOps 2025 Summer Course - Book Catalog API
+## About 
+
+### CCT- Diploma in DevOps 2025 Summer Course - Book Catalog API
 
 This project serves as a comprehensive example of modern DevOps practices, demonstrating the integration of development, containerization, orchestration, and GitOps methodologies in a production-ready application.
+
+Project developed by: Gonzalo Vilugron
+Student number : 2024224
+Lecturer       : Esteban Garcia
+CCT College
