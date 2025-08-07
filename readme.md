@@ -1,219 +1,382 @@
 # Book Catalog API
 
-A simple RESTful service for managing a catalog of books, built with Django & Django REST Framework, containerized with Docker, and deployable to Kubernetes via Helm.
-
----
+A comprehensive RESTful service for managing a catalog of books, built with Django \& Django REST Framework. The project demonstrates modern DevOps practices with containerization, multiple deployment strategies, and GitOps workflows using ArgoCD.
 
 ## Table of Contents
 
-- [Overview](#overview)  
-- [Prerequisites](#prerequisites)  
-- [Local Setup](#local-setup)  
-  - [Using Virtualenv](#using-virtualenv)  
-  - [Using Docker Compose](#using-docker-compose)  
-- [API Usage](#api-usage)  
-- [Running Tests](#running-tests)  
-- [Docker Image](#docker-image)  
-- [CI/CD Pipelines](#cicd-pipelines)  
-- [Kubernetes Deployment](#kubernetes-deployment)  
-  - [Helm Chart](#helm-chart)  
-  - [Raw Manifests](#raw-manifests)  
-- [Contributing](#contributing)  
-- [License](#license)  
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Local Development](#local-development)
+    - [Using Virtual Environment](#using-virtual-environment)
+    - [Using Docker Compose](#using-docker-compose)
+- [API Usage](#api-usage)
+- [Testing](#testing)
+- [Docker](#docker)
+- [CI/CD Pipelines](#cicd-pipelines)
+- [Kubernetes Deployment](#kubernetes-deployment)
+    - [Helm Chart Deployment](#helm-chart-deployment)
+    - [Raw Kubernetes Manifests](#raw-kubernetes-manifests)
+    - [ArgoCD GitOps](#argocd-gitops)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
----
 
 ## Overview
 
-This project implements a simple book catalog API with CRUD operations:
+This project implements a book catalog API with full CRUD operations and demonstrates enterprise-grade DevOps practices:
 
-- **Create** a new book  
-- **Read** a list of books or details for a single book  
-- **Update** an existing book  
-- **Delete** a book  
+**Core Features:**
 
-It demonstrates:
+- **Create** new books with title, author, ISBN, and publication date
+- **Read** books with list and detail views
+- **Update** existing book information
+- **Delete** books from the catalog
+- **Health check** endpoint for monitoring
 
-- Django + DRF application structure  
-- Automated testing with `pytest`  
-- Containerization with Docker & Docker Compose  
-- GitHub Actions CI for testing, image build & publish, and Kubernetes deploy  
-- Kubernetes deployment via Helm chart and raw manifests  
+**DevOps \& Infrastructure Features:**
 
----
+- Django + Django REST Framework application architecture
+- Comprehensive test suite with pytest
+- Docker containerization with multi-stage builds
+- PostgreSQL database with persistent storage
+- Multiple Kubernetes deployment strategies
+- Helm charts for package management
+- ArgoCD for GitOps continuous deployment
+- GitHub Container Registry integration
+- Automated CI/CD pipelines
+
+
+## Architecture
+
+The application follows a cloud-native architecture with:
+
+- **Application Layer**: Django REST Framework API
+- **Database Layer**: PostgreSQL with persistent volumes
+- **Container Layer**: Docker with optimized images
+- **Orchestration Layer**: Kubernetes with Helm charts
+- **GitOps Layer**: ArgoCD for automated deployments
+- **CI/CD Layer**: GitHub Actions workflows
+
 
 ## Prerequisites
 
-- **Python** ≥ 3.13  
-- **Docker** & **Docker Compose**  
-- **kubectl** (configured for your cluster)  
-- **Helm** ≥ 3.0  
-- A container registry (we use GitHub Container Registry)  
-- GitHub Actions secrets:  
-  - `GITHUB_TOKEN` (automatic)  
-  - `KUBE_CONFIG_DATA` (your base64-encoded kubeconfig)  
+**Development Requirements:**
 
----
+- Python ≥ 3.13
+- Docker \& Docker Compose
+- Git
 
-## Local Setup
+**Deployment Requirements:**
 
-### Using Virtualenv
+- kubectl (configured for your Kubernetes cluster)
+- Helm ≥ 3.0
+- ArgoCD (optional, for GitOps deployment)
+
+**CI/CD Requirements:**
+
+- GitHub Container Registry access
+- GitHub Actions secrets:
+    - `GITHUB_TOKEN` (automatically provided)
+    - `KUBE_CONFIG_DATA` (base64-encoded kubeconfig for deployment)
+
+
+## Local Development
+
+### Using Virtual Environment
 
 ```bash
+# Clone the repository
 git clone https://github.com/gavilugron/book-catalog.git
 cd book-catalog
 
-# create & activate venv
+# Create and activate virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
 
-# install dependencies
+# Install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# apply migrations & run server
+# Run database migrations
 python manage.py migrate
+
+# Start the development server
 python manage.py runserver
 ```
-Visit http://127.0.0.1:8000/api/books/.
 
----
+The API will be available at [http://127.0.0.1:8000/api/books/](http://127.0.0.1:8000/api/books/).
 
-## Using Docker Compose
+### Using Docker Compose
 
-```Bash
+```bash
+# Start all services (app + PostgreSQL)
 docker-compose up --build
 ```
 
-- **App** listens on `localhost:8000`
-- **Postgres** runs in `db` service
+**Services:**
 
-Shutdown with `docker-compose down`.
+- **Application**: Available at `localhost:8000`
+- **PostgreSQL Database**: Running as `db` service with persistent volume
 
----
+To stop all services:
+
+```bash
+docker-compose down
+```
+
 
 ## API Usage
 
-Assuming service on `localhost:8000`:
+Base URL: `http://localhost:8000/api/`
 
-- **List all books**
+### Endpoints
 
-```Bash
+| Method | Endpoint | Description |
+| :-- | :-- | :-- |
+| GET | `/api/books/` | List all books |
+| GET | `/api/books/{id}/` | Get specific book details |
+| POST | `/api/books/` | Create a new book |
+| PUT | `/api/books/{id}/` | Update existing book |
+| DELETE | `/api/books/{id}/` | Delete a book |
+| GET | `/health/` | Health check endpoint |
+
+### Examples
+
+**List all books:**
+
+```bash
 curl http://localhost:8000/api/books/
 ```
 
-- **Get one book**
+**Get a specific book:**
 
-```Bash
+```bash
 curl http://localhost:8000/api/books/1/
 ```
 
-- **Create a book**
+**Create a new book:**
 
-```Bash
+```bash
 curl -X POST http://localhost:8000/api/books/ \
   -H "Content-Type: application/json" \
-  -d '{"title":"Dune","author":"Frank Herbert","published_date":"1965-08-01"}'
+  -d '{
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "isbn": "978-0-441-17271-9",
+    "published_date": "1965-08-01"
+  }'
 ```
 
-- **Update a book**
+**Update a book:**
 
-```Bash
+```bash
 curl -X PUT http://localhost:8000/api/books/1/ \
   -H "Content-Type: application/json" \
-  -d '{"title":"Dune Messiah"}'
+  -d '{"title": "Dune Messiah"}'
 ```
 
-- **Delete a book**
+**Delete a book:**
 
-```Bash
+```bash
 curl -X DELETE http://localhost:8000/api/books/1/
 ```
 
----
 
-## Running Tests
+## Testing
 
-```Bash
-# with virtualenv
+The project includes comprehensive test coverage using pytest.
+
+**Run tests locally:**
+
+```bash
+# In virtual environment
 pytest
 
-# via Docker
+# Using Docker
 docker-compose run --rm app pytest
 ```
-GitHub Actions automatically runs tests on every PR and push to main.
 
----
+**Test Configuration:**
 
-## Docker Image
+- Test files located in `api/tests/`
+- Django settings configured in `pytest.ini`
+- Automatic test execution in CI/CD pipeline
 
-- Build and tag locally:
 
-```Bash
-docker build -t ghcr.io/<your-org>/book-catalog:latest .
+## Docker
+
+### Building Images
+
+**Build locally:**
+
+```bash
+docker build -t ghcr.io/gavilugron/book-catalog:latest .
 ```
 
-- Push to GHCR:
+**Push to GitHub Container Registry:**
 
-```Bash
-docker push ghcr.io/<your-org>/book-catalog:latest
+```bash
+docker push ghcr.io/gavilugron/book-catalog:latest
 ```
 
----
+
+### Docker Features
+
+- Multi-stage build optimization
+- Health checks for container monitoring
+- Non-root user for security
+- Efficient layer caching
+- Production-ready entrypoint script
+
 
 ## CI/CD Pipelines
 
-- `.github/workflows/test.yml`
-Runs migrations and `pytest` on push/PR to `main`.
+The project includes three GitHub Actions workflows:
 
-- `.github/workflows/ci-build.yml`
-Builds your Docker image via Buildx and pushes to GHCR.
+### 1. Test Workflow (`.github/workflows/test.yml`)
 
-- `.github/workflows/ci-deploy.yml`
-Decodes `KUBE_CONFIG_DATA`, then runs `helm upgrade --install` to deploy the new image.
+- Triggers on push/PR to `main`
+- Runs database migrations
+- Executes full test suite with pytest
+- Reports test coverage
 
----
+
+### 2. Build Workflow (`.github/workflows/ci-build.yml`)
+
+- Builds Docker images using Buildx
+- Pushes images to GitHub Container Registry
+- Tags images with commit SHA and `latest`
+- Multi-platform support
+
+
+### 3. Deploy Workflow (`.github/workflows/ci-deploy.yml`)
+
+- Decodes Kubernetes configuration
+- Updates Helm chart with new image tags
+- Deploys to Kubernetes cluster
+- Integrates with ArgoCD for GitOps
+
 
 ## Kubernetes Deployment
 
-### Helm Chart
+The project supports multiple Kubernetes deployment strategies:
 
-Chart directory: `books-catalog-chart/`
+### Helm Chart Deployment
 
-```Bash
-# deploy to default namespace
+**Using the included Helm chart:**
+
+```bash
+# Deploy to default namespace
 helm upgrade --install book-catalog ./books-catalog-chart \
   --namespace default \
-  --set image.repository=ghcr.io/<your-org>/book-catalog \
+  --set image.repository=ghcr.io/gavilugron/book-catalog \
   --set image.tag=latest
 ```
 
-### Raw Manifests
+**Helm Chart Features:**
 
-Under `k8s_yamls/`:
+- Configurable replica count
+- Resource limits and requests
+- Ingress configuration
+- Secret management
+- Environment variable injection
+- Database connection configuration
 
-- `application/` → Deployment, Service, Ingress, Job, Secrets
 
-- `postgres/` → Namespace, PVC, StatefulSet, Service, ConfigMap, Secrets, etc.
+### Raw Kubernetes Manifests
 
-Apply with:
+**Deploy using raw manifests:**
 
-```Bash
+```bash
+# Deploy PostgreSQL
 kubectl apply -f k8s_yamls/postgres/
+
+# Deploy application
 kubectl apply -f k8s_yamls/application/
 ```
 
----
+**Manifest Structure:**
+
+- **Application**: Deployment, Service, Ingress, Jobs, Secrets
+- **PostgreSQL**: StatefulSet, Services, ConfigMaps, PersistentVolumes
+- **DevOps Tools**: Additional charts and configurations
+
+
+### ArgoCD GitOps
+
+**ArgoCD Application Configuration:**
+
+- Automated sync from Git repository
+- Helm chart deployment
+- Self-healing capabilities
+- Rollback support
+
+**Deploy ArgoCD Application:**
+
+```bash
+kubectl apply -f argocd/argocd-app.yaml
+```
+
+**GitOps Features:**
+
+- Declarative configuration management
+- Automated deployment on Git changes
+- Visual deployment monitoring
+- Rollback and recovery capabilities
+
+
+## Project Structure
+
+```
+book-catalog/
+├── .github/
+│   ├── actions/install-dependencies/     # Reusable GitHub Actions
+│   └── workflows/                        # CI/CD pipeline definitions
+├── api/                                  # Django API application
+│   ├── migrations/                       # Database migrations
+│   ├── tests/                           # Test suite
+│   └── [models, views, serializers]     # API implementation
+├── argocd/                              # ArgoCD GitOps configurations
+├── bookcatalog/                         # Django project settings
+├── books-catalog-chart/                 # Helm chart
+│   ├── templates/                       # Kubernetes templates
+│   └── values.yaml                      # Chart configuration
+├── k8s_yamls/                          # Raw Kubernetes manifests
+│   ├── application/                     # Application manifests
+│   ├── postgres/                        # PostgreSQL manifests
+│   └── devops-chart/                    # Additional DevOps tools
+├── docker-compose.yml                   # Local development setup
+├── Dockerfile                          # Container definition
+├── requirements.txt                     # Python dependencies
+└── entrypoint.sh                       # Container entrypoint script
+```
+
 
 ## Contributing
 
-1. Fork the repo
-2. Create a feature branch
-3. Commit with Conventional Commits
-4. Open a Pull Request
+We welcome contributions! Please follow these guidelines:
 
----
+1. **Fork** the repository
+2. **Create** a feature branch from `main`
+3. **Make** your changes with appropriate tests
+4. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/)
+5. **Submit** a Pull Request with detailed description
+
+**Development Guidelines:**
+
+- Follow PEP 8 coding standards
+- Add tests for new features
+- Update documentation as needed
+- Ensure CI/CD pipeline passes
 
 ## License
 
-This project is released under the MIT License.
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+**About**: CCT-DevOps 2025 Summer Course - Book Catalog API
+
+This project serves as a comprehensive example of modern DevOps practices, demonstrating the integration of development, containerization, orchestration, and GitOps methodologies in a production-ready application.
+
+<div style="text-align: center">⁂</div>
