@@ -11,7 +11,7 @@ image:
 
 # This will be used to configure the Deployment so it can pull the image
 imagePullSecrets: 
-  - name: ghcr-cred # Name of the secret created by the kubectl create secret command
+  - name: ghcr-secret # Name of the secret created by the kubectl create secret command
 
 ingress:
   annotations:
