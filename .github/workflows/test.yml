@@ -1,5 +1,4 @@
-name: Run Tests
-
+name: Run the unit tests
 on:
   pull_request:
     branches:
@@ -11,6 +10,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,9 +19,10 @@ jobs:
       
       - name: Run pytest
         run: pytest
-
-  run-migrations:
+  
+  runmigrations:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,15 +31,62 @@ jobs:
       
       - name: Run django migrate
         run: python manage.py migrate
-
+  
   migrations-check:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
       - uses: ./.github/actions/install-dependencies
       
-      - name: Check for missing migrations
+      - name: Run makemigrations
         run: python manage.py makemigrations --check
+  
+  build-docker-image:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - runmigrations
+      - migrations-check
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/gavilugron/book-catalog
+      
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Bump Helm chart image.tag
+        run: |
+          yq e -i ".image.tag = \"${{ github.sha }}\"" books-catalog-chart/values.yaml
+
+      - name: Commit updated chart
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "ci: bump Helm chart image.tag to ${{ github.sha }}"
+          branch: main
