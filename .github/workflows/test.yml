@@ -41,3 +41,4 @@ jobs:
       
       - name: Check for missing migrations
         run: python manage.py makemigrations --check
+
