@@ -6,7 +6,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag to deploy
-  tag: "608ca323c77715085aba95b6dcd4f9eaf4413821"
+  tag: "85d72c333142353b685266717ee372f92fbfebcb"
 # This will be used to configure the Deployment so it can pull the image
 imagePullSecrets: []
 ingress:
