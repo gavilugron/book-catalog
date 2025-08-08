@@ -6,7 +6,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag to deploy
-  tag: "d4a422f8e91015c3ebe56a45b03307c142048266"
+  tag: "be6495c54ada8be0380849bc1a866e35b152b561"
 # This will be used to configure the Deployment so it can pull the image
 imagePullSecrets:
   - name: regcred
