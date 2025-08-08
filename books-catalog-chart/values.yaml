@@ -6,10 +6,10 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag to deploy
-  tag: "fa12e9f8c41c7f79624d996afa6ceaf2b9ef73af"
+  tag: "main"
 # This will be used to configure the Deployment so it can pull the image
 imagePullSecrets:
-  - name: ghcr-cred
+  - name: k8s-ghcr
 ingress:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
