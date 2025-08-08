@@ -81,12 +81,12 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Bump Helm chart image.tag
-        run: |
-          yq e -i ".image.tag = \"${{ github.sha }}\"" books-catalog-chart/values.yaml
+      # - name: Bump Helm chart image.tag
+      #   run: |
+      #     yq e -i ".image.tag = \"${{ github.sha }}\"" books-catalog-chart/values.yaml
 
-      - name: Commit updated chart
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "ci: bump Helm chart image.tag to ${{ github.sha }}"
-          branch: main
+      # - name: Commit updated chart
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     commit_message: "ci: bump Helm chart image.tag to ${{ github.sha }}"
+      #     branch: main
