@@ -8,14 +8,15 @@ image:
   # Overrides the image tag to deploy
   tag: "cf7d4b79b3e99a58d45e96cadf0c579b8a60880a"
 # This will be used to configure the Deployment so it can pull the image
-imagePullSecrets: []
+imagePullSecrets:
+  - name: regcred
 ingress:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
-loadSecretsFrom: books-database-postgresql # Name of the secret created by the postgresql helm chart
+loadSecretsFrom: bookcatalog-db-secret # Name of the secret created by the postgresql helm chart
 environmentVariables: # Environment variables we want to configure in the application so we can connect to the database
   - name: DATABASE_USER
     value: books
