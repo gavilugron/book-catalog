@@ -9,7 +9,7 @@ image:
   tag: "be6495c54ada8be0380849bc1a866e35b152b561"
 # This will be used to configure the Deployment so it can pull the image
 imagePullSecrets:
-  - name: regcred
+  - name: ghcr-cred
 ingress:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
