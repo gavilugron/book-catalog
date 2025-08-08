@@ -14,5 +14,5 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists
 
 COPY . .
-
+# RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
