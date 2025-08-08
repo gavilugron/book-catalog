@@ -16,7 +16,7 @@ ingress:
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
-loadSecretsFrom: bookcatalog-db-secret # Name of the secret created by the postgresql helm chart
+loadSecretsFrom: postgres-book-postgresql # Name of the secret created by the postgresql helm chart
 environmentVariables: # Environment variables we want to configure in the application so we can connect to the database
   - name: DATABASE_USER
     value: books
