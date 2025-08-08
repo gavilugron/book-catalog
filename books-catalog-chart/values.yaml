@@ -6,7 +6,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag to deploy
-  tag: "main"
+  tag: "e8d5872ea10560334417f0ce8bfbbe3b296a7dae"
 # This will be used to configure the Deployment so it can pull the image
 imagePullSecrets:
   - name: k8s-ghcr
